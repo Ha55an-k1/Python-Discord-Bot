@@ -1,7 +1,3 @@
-#UwU-Bot/ Python Discord Bot
-#Functions still being implemented
-#|/-\..Work in Progress T^T
-
 import discord
 from discord.ext import commands
 import random
@@ -44,7 +40,7 @@ async def on_member_remove(member):
 @bot.command()
 async def uwu(ctx):
     embed = discord.Embed(
-        title = "UwU-bot - Created by Hassan",
+        title = ":fish_cake: UwU-bot - Created by Hassan :fish_cake:",
         description = "All available commands provided by UwU-bot.",
         color = 0X00F2FF
     )
@@ -219,34 +215,47 @@ async def anime(ctx,*,ans):
     engtitle =  anime_json['title_english']
     japtitle = anime_json['title_japanese']
     main_title =anime_json['title']
+    
     anime_url=anime_json['url']
     image_url = anime_json['image_url']
     synopsis = anime_json['synopsis']
     episodes =  anime_json['episodes']
     score =anime_json['score']
     status = anime_json['status']
-    genre= anime_json['genres'][0]['name']
+    premier = anime_json['premiered']
 
     studio_name = anime_json['studios'][0]['name']
     studio_url= anime_json['studios'][0]['url']
 
-    premier = anime_json['premiered']
     licensor_name=anime_json['licensors'][0]['name']
     licensor_url= anime_json['licensors'][0]['url']
 
-    await aio_jikan.close()
+    #Genres
+    g_name=[];g_url=[]
+    for each in anime_json['genres']:
+        g_name.append(each.get('name'))
+        g_url.append(each.get('url'))
+    genre_string=", ".join(g_name)
     
-    # for each in anime_json['genres'][0]['name']:
-    #    genre += each 
+    #Producers
+    pro_name=[];pro_url=[]
+    for each in anime_json['producers']:
+        pro_name.append(each.get('name'))
+        pro_url.append(each.get('url'))
+    pro_string=", ".join(pro_name)    
+
+    #Jikan CLOSE()--------------(T^T)
+    await aio_jikan.close()
     
     if synopsis.endswith('[Written by MAL Rewrite]'):
         paralen=round(len(synopsis)/2)
         synopsis=synopsis[:-paralen]
         synopsis=synopsis+'...'
 
-    #-EMBED BEGINS-------------------------------
-    animeembed= discord.Embed(title=":tv:", color=0X00F2FF)
+    
+    animeembed= discord.Embed(title=" :tv: :ramen:", color=0X00F2FF)
     animeembed.set_thumbnail(url=image_url)
+
     animeembed.add_field(
         name="**Title:**",
         value=main_title,
@@ -283,6 +292,11 @@ async def anime(ctx,*,ans):
         inline=False
     )
     animeembed.add_field(
+        name="**Producer:**",
+        value=pro_string,
+        inline=False
+    )
+    animeembed.add_field(
         name="**Licensor:**",
         value="[{0}]({1})".format(licensor_name,licensor_url),
         inline=False
@@ -295,21 +309,19 @@ async def anime(ctx,*,ans):
 
     animeembed.add_field(
         name="**Genre:**",
-        value=genre,
+        value=genre_string,
         inline=False
     )
 
     animeembed.add_field(
         name="**Synopsis:**",
-        value=synopsis+"[read more]({})".format(anime_url),
+        value="*{0}*[read more]({1})".format(synopsis,anime_url),
         inline=False
     )
     animeembed.set_footer(text="Provided by JikanPy")
     
     await ctx.send(embed=animeembed)
     
-
-
 
 
 #Idea taken from Rye2021-CS-Discord Python bot
@@ -445,7 +457,6 @@ async def quote(ctx):
     color=0X00D2DC)
 
     e.set_footer(icon_url='https://cdn.discordapp.com/attachments/574412924764815383/577699510369910784/uwuuu.png',text=quote_arr[1])
-    # e.set_image(url='https://i.kinja-img.com/gawker-media/image/upload/s--qBvJrrAs--/c_scale,f_auto,fl_progressive,q_80,w_800/tb3valnfpsnxqxdbdtol.png')
     await ctx.send(embed= e)
 
 
