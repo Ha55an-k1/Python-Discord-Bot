@@ -229,16 +229,12 @@ async def anime(ctx,*,ans):
     licensor_name=anime_json['licensors'][0]['name']
     licensor_url= anime_json['licensors'][0]['url']
 
-<<<<<<< HEAD
     #Genres
-=======
->>>>>>> 5f4b9cb7ac426dc6a2bbadb358d1aeeac4621b26
     g_name=[];g_url=[]
     for each in anime_json['genres']:
         g_name.append(each.get('name'))
         g_url.append(each.get('url'))
     genre_string=", ".join(g_name)
-<<<<<<< HEAD
     
     #Producers
     pro_name=[];pro_url=[]
@@ -250,11 +246,6 @@ async def anime(ctx,*,ans):
     #Jikan CLOSE()--------------(T^T)
     await aio_jikan.close()
     
-=======
-        
-    await aio_jikan.close()
-    
->>>>>>> 5f4b9cb7ac426dc6a2bbadb358d1aeeac4621b26
     if synopsis.endswith('[Written by MAL Rewrite]'):
         paralen=round(len(synopsis)/2)
         synopsis=synopsis[:-paralen]
