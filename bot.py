@@ -7,8 +7,9 @@ import time
 import json
 from random import randint
 from jikanpy import AioJikan
-jikan_url='https://api.jikan.moe/v3/anime/'
-
+jikan_anime_url='https://api.jikan.moe/v3/anime/'
+jikan_manga_url='https://api.jikan.moe/v3/manga/'
+ent_type_url="https://myanimelist.net/topanime.php?type="
 
 
 bot = commands.Bot(command_prefix = "!")
@@ -72,8 +73,8 @@ async def uwu(ctx):
     )
 
     embed.add_field(
-        name = "{0}wys".format(bot.command_prefix),
-        value = "wys shordy",
+        name = "{0}<<keyword>>".format(bot.command_prefix),
+        value = "send a determined embedded gif\n ora ,muda ,bang ,mrstark ,snap ,chill ,wys",
         inline = False
     )
 
@@ -85,7 +86,12 @@ async def uwu(ctx):
 
     embed.add_field(
         name = "{0}anime <<name>>".format(bot.command_prefix),
-        value = "Returns MAL profile of anime searched",
+        value = "Retrieves MAL profile of anime searched",
+        inline = False
+    )
+    embed.add_field(
+        name = "{0}manga <<name>>".format(bot.command_prefix),
+        value = "Retrieves MAL profile of manga searched",
         inline = False
     )
 
@@ -126,6 +132,14 @@ async def mrstark(ctx):
     txt3= discord.Embed(title="I don't feel so good",color=0X56212F)
     txt3.set_image(url='https://i.imgur.com/1paUKNt.gif')
     await ctx.send(embed= txt3)
+
+
+@bot.command()
+async def snap(ctx):
+    txt4= discord.Embed(title="Perfectly balanced, as all things should be",color=0X56212F)
+    txt4.set_image(url='https://i.imgur.com/novvq8q.gif')
+    await ctx.send(embed= txt4)
+
 
 @bot.command(aliases=["lofi"])
 async def chill(ctx):
@@ -196,25 +210,30 @@ async def ping(ctx):
 
 
 
+
 #_____________________________________________________
-#ANIME MAL PROFILE LOOKUP
-# Implemented using JikanPy 
+#ANIME MAL PROFILE Retrieval
+# Implemented using JikanPy  
 @bot.command()
 async def anime(ctx,*,ans):
     aio_jikan = AioJikan()
     search_result = await aio_jikan.search(search_type='anime',query=ans)
-    #anime_json= await aio_jikan.anime(457)
-    #print(data)
+    
+    #Id Retrieval
     mal_id =search_result['results'][0]['mal_id']
 
-    main_url=jikan_url+'{}'.format(mal_id)
+    main_url=jikan_anime_url+'{}'.format(mal_id)
 
     anime_json=requests.get(main_url).json()
     
-    engtitle =  anime_json['title_english']
-    japtitle = anime_json['title_japanese']
+    #Metadata
+    eng_title =  anime_json['title_english']
+    jap_title = anime_json['title_japanese']
     main_title =anime_json['title']
-    
+
+    medium=anime_json['type']
+    type_url= ent_type_url +'{}'.format(medium.lower())
+
     anime_url=anime_json['url']
     image_url = anime_json['image_url']
     synopsis = anime_json['synopsis']
@@ -229,16 +248,15 @@ async def anime(ctx,*,ans):
     licensor_name=anime_json['licensors'][0]['name']
     licensor_url= anime_json['licensors'][0]['url']
 
-<<<<<<< HEAD
+    air_date= anime_json['aired'].get('string')
+
+
     #Genres
-=======
->>>>>>> 5f4b9cb7ac426dc6a2bbadb358d1aeeac4621b26
     g_name=[];g_url=[]
     for each in anime_json['genres']:
         g_name.append(each.get('name'))
         g_url.append(each.get('url'))
     genre_string=", ".join(g_name)
-<<<<<<< HEAD
     
     #Producers
     pro_name=[];pro_url=[]
@@ -250,85 +268,215 @@ async def anime(ctx,*,ans):
     #Jikan CLOSE()--------------(T^T)
     await aio_jikan.close()
     
-=======
-        
-    await aio_jikan.close()
-    
->>>>>>> 5f4b9cb7ac426dc6a2bbadb358d1aeeac4621b26
     if synopsis.endswith('[Written by MAL Rewrite]'):
         paralen=round(len(synopsis)/2)
         synopsis=synopsis[:-paralen]
         synopsis=synopsis+'...'
 
-    
-    animeembed= discord.Embed(title=" :tv: :ramen:", color=0X00F2FF)
-    animeembed.set_thumbnail(url=image_url)
+    #Embed
+    anime_embed= discord.Embed(title=" :tv: :ramen:", color=0X00F2FF)
+    anime_embed.set_thumbnail(url=image_url)
 
-    animeembed.add_field(
+    anime_embed.add_field(
         name="**Title:**",
         value=main_title,
         inline=False
     )
-    animeembed.add_field(
+    anime_embed.add_field(
+        name="**English:**",
+        value=eng_title,
+        inline=False
+    )
+    anime_embed.add_field(
         name="**Japanese:**",
-        value=japtitle,
+        value=jap_title,
         inline=False
     )
-    animeembed.add_field(
+    anime_embed.add_field(
         name="**Type:**",
-        value="[TV]({})".format("https://myanimelist.net/topanime.php?type=tv"),
+        value="[{}]({})".format(medium.upper(),type_url),
         inline=False
     )
-    animeembed.add_field(
+    anime_embed.add_field(
         name="**Episodes:**",
         value=episodes,
         inline=False
     )
-    animeembed.add_field(
+    anime_embed.add_field(
         name="**Status:**",
         value=status,
         inline=False
     )
-    animeembed.add_field(
+    anime_embed.add_field(
+        name="**Aired:**",
+        value=air_date,
+        inline=False
+    )
+    anime_embed.add_field(
         name="**Premiered:**",
         value=premier,
         inline=False
     )
-    animeembed.add_field(
+    anime_embed.add_field(
         name="**Score:**",
         value=score,
         inline=False
     )
-    animeembed.add_field(
+    anime_embed.add_field(
         name="**Producer:**",
         value=pro_string,
         inline=False
     )
-    animeembed.add_field(
+    anime_embed.add_field(
         name="**Licensor:**",
         value="[{0}]({1})".format(licensor_name,licensor_url),
         inline=False
     )
-    animeembed.add_field(
+    anime_embed.add_field(
         name="**Studio:**",
         value="[{0}]({1})".format(studio_name,studio_url),
         inline=False
     )
 
-    animeembed.add_field(
+    anime_embed.add_field(
         name="**Genre:**",
         value=genre_string,
         inline=False
     )
 
-    animeembed.add_field(
+    anime_embed.add_field(
         name="**Synopsis:**",
         value="*{0}*[read more]({1})".format(synopsis,anime_url),
         inline=False
     )
-    animeembed.set_footer(text="Provided by JikanPy")
+    anime_embed.set_footer(icon_url='https://i.imgur.com/03Y0GUM.png',text="Provided by JikanPy")
     
-    await ctx.send(embed=animeembed) 
+    await ctx.send(embed=anime_embed)
+    
+
+#______________________________________________________________
+#MANGA MAL Profile Retrieval
+@bot.command()
+async def manga(ctx,*,ans):
+    aio_jikan = AioJikan()
+    search_result = await aio_jikan.search(search_type='manga',query=ans)
+    
+    #Id retrieval
+    mal_id =search_result['results'][0]['mal_id']
+
+    main_url=jikan_manga_url+'{}'.format(mal_id)
+
+    manga_json=requests.get(main_url).json()
+    
+    #Metadata
+    eng_title = manga_json['title_english']
+    jap_title = manga_json['title_japanese']
+    main_title =manga_json['title']
+    manga_url=manga_json['url']
+
+    medium=manga_json['type']
+    type_url=ent_type_url +'{}'.format(medium.lower())
+    
+    image_url = manga_json['image_url']
+    synopsis = manga_json['synopsis']
+    volumes =  manga_json['volumes']
+    chapters=manga_json['chapters']
+    score =manga_json['score']
+    status = manga_json['status']
+    published = manga_json['published'].get('string')
+
+    serial = manga_json['serializations'][0]['name']
+    serial_url= manga_json['serializations'][0]['url']
+
+    paralen=round(len(synopsis)/2)
+    synopsis=synopsis[:-paralen]
+    synopsis=synopsis+'...'
+
+    #Genres
+    g_name=[];g_url=[]
+    for each in manga_json['genres']:
+        g_name.append(each.get('name'))
+        g_url.append(each.get('url'))
+    genre_string=", ".join(g_name)
+
+    #Authors
+    a_name=[];a_url=[]
+    for each in manga_json['authors']:
+        a_name.append(each.get('name'))
+        a_url.append(each.get('url'))
+    author_string=", ".join(a_name)
+    
+
+    #Jikan CLOSE()--------------(T^T)
+    await aio_jikan.close()
+    
+    #Embed
+    manga_embed=discord.Embed(title=":notebook_with_decorative_cover: :coffee:",color=0X00F2FF)
+    manga_embed.set_thumbnail(url=image_url)
+    manga_embed.add_field(
+        name="**Title:**",
+        value=main_title,
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**Japanese:**",
+        value=jap_title,
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**English:**",
+        value=eng_title,
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**Type:**",
+        value="[Manga]({})".format(type_url),
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**Volumes:**",
+        value=volumes,
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**Chapters:**",
+        value=chapters,
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**Status:**",
+        value=status,
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**Published:**",
+        value=published,
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**Genre:**",
+        value=genre_string,
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**Authors:**",
+        value=author_string,
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**Serialization:**",
+        value="[{0}]({1})".format(serial,serial_url),
+        inline=False
+    )
+    manga_embed.add_field(
+        name="**Synopsis:**",
+        value="*{0}*[read more]({1})".format(synopsis,manga_url),
+        inline=False
+    )
+    manga_embed.set_footer(icon_url='https://i.imgur.com/03Y0GUM.png',text="Provided by JikanPy")
+    await ctx.send(embed=manga_embed)
+
+
 
 
 #Idea taken from Rye2021-CS-Discord Python bot
@@ -463,7 +611,7 @@ async def quote(ctx):
     description=quote_arr[0],
     color=0X00D2DC)
 
-    e.set_footer(icon_url='https://cdn.discordapp.com/attachments/574412924764815383/577699510369910784/uwuuu.png',text=quote_arr[1])
+    e.set_footer(icon_url='https://i.imgur.com/03Y0GUM.png',text=quote_arr[1])
     await ctx.send(embed= e)
 
 
