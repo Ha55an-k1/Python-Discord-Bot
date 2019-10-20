@@ -248,9 +248,12 @@ async def anime(ctx,*,ans):
     licensor_name=anime_json['licensors'][0]['name']
     licensor_url= anime_json['licensors'][0]['url']
 
+<<<<<<< HEAD
     air_date= anime_json['aired'].get('string')
 
 
+=======
+>>>>>>> 3902125d9ee1d65d8b4e877f8010cf2c0eb7c14c
     #Genres
     g_name=[];g_url=[]
     for each in anime_json['genres']:
