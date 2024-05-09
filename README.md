@@ -1,7 +1,8 @@
-# UwU-bot-Python-Discord-Bot
-Discord Bot created using Python
+## Python Discord Bot
+Discord Bot created using Discord.py
 
-### UwU-bot - Created by Hassan
+
+## Tomo Bot - By Hassan
 >All available commands provided by UwU-bot:
 
-![UwU commands](https://i.imgur.com/xHNEYBe.png)
+![command list](https://i.imgur.com/8zEeEHh.png)
